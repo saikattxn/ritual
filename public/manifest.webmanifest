@@ -1,0 +1,15 @@
+{
+  "name": "Ritual",
+  "short_name": "Ritual",
+  "description": "A calm, private companion for skincare, hair care, workouts and daily habits.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf6ee",
+  "theme_color": "#f3f6f1",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
