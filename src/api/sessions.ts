@@ -142,6 +142,17 @@ export function useStartSession() {
     mutationFn: async ({ template, planned, title, today }: {
       template?: TemplateWithExercises | null; planned?: PlannedWorkout | null; title?: string; today: ISODate;
     }) => {
+      // Only one workout can be in progress. Unstarted ones (no sets ticked) are
+      // cleared away; one with logged sets must be finished or discarded first.
+      const open = must(await supabase.from('workout_sessions')
+        .select('id, title, workout_session_exercises(workout_sets(completed))')
+        .eq('status', 'in_progress')) as unknown as
+        { id: string; title: string; workout_session_exercises: { workout_sets: { completed: boolean }[] }[] }[];
+      for (const s of open) {
+        const logged = s.workout_session_exercises.some((e) => e.workout_sets.some((w) => w.completed));
+        if (logged) throw new Error(`“${s.title}” is still in progress. Finish or discard it before starting another workout.`);
+        must(await supabase.from('workout_sessions').delete().eq('id', s.id));
+      }
       const session = must(await supabase.from('workout_sessions').insert({
         title: title ?? planned?.title ?? template?.name ?? 'Workout',
         on_date: today,
